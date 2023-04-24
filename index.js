@@ -1,24 +1,27 @@
-require("dotenv").config();
-
-
 const express = require('express');
+const mongoose = require('mongoose');
+const dotenv = require('dotenv').config();
 const cors = require('cors');
-const {dbConnection} = require("./database/config");
-const { addToDo, getToDos, deleteTodos } = require("./controllers/todos");
-const userRoutes = require ("./routes/UserRoutes");
 
 const app = express();
-dbConnection();
+app.use(express.json());
+
+const PORT = process.env.PORT || 4000;
+
 
 app.use(cors());
-app.use(express.json())
 
-app.use("/users", userRoutes)
 
-app.post("/todo", addToDo)
-app.get("/todo", getToDos)
-app.delete("/todo/:todoId", deleteTodos)
+const TodoItemRoute = require('./routes/UserRoutes');
 
-app.listen(process.env.PORT, () => {
-  console.log('Server listening');
-});
+
+mongoose.connect(process.env.DB_CNN)
+.then(()=> console.log("Database connected"))
+.catch(err => console.log(err))
+
+
+app.use('/', TodoItemRoute);
+
+
+
+app.listen(PORT, ()=> console.log("Server connected") );
